@@ -3,7 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 
 app.use(
@@ -30,6 +30,22 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
+
+    const campCollection = client.db("campMed").collection("camps");
+
+    app.get("/camps", async (req, res) => {
+      const cursor = campCollection.find().sort({ participantCount: -1 });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/camp/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const camp = await campCollection.findOne(query);
+      res.send(camp);
+    });
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log(
