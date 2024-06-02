@@ -32,6 +32,9 @@ async function run() {
     // await client.connect();
 
     const campCollection = client.db("campMed").collection("camps");
+    const participantCollection = client
+      .db("campMed")
+      .collection("participants");
 
     app.get("/camps", async (req, res) => {
       const cursor = campCollection.find().sort({ participantCount: -1 });
@@ -44,6 +47,30 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const camp = await campCollection.findOne(query);
       res.send(camp);
+    });
+
+    // Participant related API
+    app.post("/participant", async (req, res) => {
+      const participant = req.body;
+      const result = await participantCollection.insertOne(participant);
+      res.send(result);
+    });
+
+    // Increase request to old collection
+    app.put("/participant/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const result = await campCollection.updateOne(
+        query,
+        {
+          $inc: {
+            participantCount: +1,
+          },
+        },
+        options
+      );
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
