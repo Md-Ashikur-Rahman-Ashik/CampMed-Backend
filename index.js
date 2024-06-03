@@ -69,6 +69,13 @@ async function run() {
     };
 
     // Users related API
+    app.get("/users", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    });
+
     app.get("/users/admin/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
 
@@ -96,6 +103,23 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedUser = req.body;
+      const user = {
+        $set: {
+          name: updatedUser.name,
+          photo: updatedUser.photo,
+          contact: updatedUser.contact,
+        },
+      };
+      const result = await userCollection.updateOne(query, user, options);
+      res.send(result);
+    });
+
+    // Camp Related API
     app.get("/camps", async (req, res) => {
       const cursor = campCollection.find().sort({ participantCount: -1 });
       const result = await cursor.toArray();
