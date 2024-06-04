@@ -74,12 +74,12 @@ async function run() {
     };
 
     // Users related API
-    // app.get("/users", async (req, res) => {
-    //   const email = req.query.email;
-    //   const query = { email: email };
-    //   const result = await userCollection.findOne(query);
-    //   res.send(result);
-    // });
+    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    });
 
     app.get("/users/admin/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
@@ -136,6 +136,13 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const camp = await campCollection.findOne(query);
       res.send(camp);
+    });
+
+    app.get("/camp", verifyToken, verifyAdmin, async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await campCollection.find(query).toArray();
+      res.send(result);
     });
 
     app.post("/camps", verifyToken, verifyAdmin, async (req, res) => {
