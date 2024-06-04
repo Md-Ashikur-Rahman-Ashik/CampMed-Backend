@@ -151,6 +151,28 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/camp/:id", verifyToken, verifyAdmin, async (req, res) => {
+      const camp = req.body;
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          campName: camp.campName,
+          campFees: camp.campFees,
+          image: camp.image,
+          date: camp.date,
+          time: camp.time,
+          location: camp.location,
+          healthcareProfessional: camp.healthcareProfessional,
+          participantCount: camp.participantCount,
+          description: camp.description,
+          shortDescription: camp.shortDescription,
+        },
+      };
+      const result = await campCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
     // Participant related API
     app.post("/participant", async (req, res) => {
       const participant = req.body;
