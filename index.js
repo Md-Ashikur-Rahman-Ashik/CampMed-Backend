@@ -66,15 +66,20 @@ async function run() {
       const email = req.decoded.email;
       const query = { email: email };
       const user = await userCollection.findOne(query);
+      const isAdmin = user?.role === "admin";
+      if (!isAdmin) {
+        return res.status(403).send({ message: "Forbidden Access" });
+      }
+      next();
     };
 
     // Users related API
-    app.get("/users", async (req, res) => {
-      const email = req.query.email;
-      const query = { email: email };
-      const result = await userCollection.findOne(query);
-      res.send(result);
-    });
+    // app.get("/users", async (req, res) => {
+    //   const email = req.query.email;
+    //   const query = { email: email };
+    //   const result = await userCollection.findOne(query);
+    //   res.send(result);
+    // });
 
     app.get("/users/admin/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
@@ -103,7 +108,7 @@ async function run() {
       res.send(result);
     });
 
-    app.put("/user/:id", async (req, res) => {
+    app.put("/user/:id", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
@@ -131,6 +136,12 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const camp = await campCollection.findOne(query);
       res.send(camp);
+    });
+
+    app.post("/camps", verifyToken, verifyAdmin, async (req, res) => {
+      const item = req.body;
+      const result = await campCollection.insertOne(item);
+      res.send(result);
     });
 
     // Participant related API
