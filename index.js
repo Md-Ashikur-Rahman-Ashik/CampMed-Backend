@@ -173,6 +173,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/camp/:id", verifyAdmin, verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await campCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // Participant related API
     app.post("/participant", async (req, res) => {
       const participant = req.body;
