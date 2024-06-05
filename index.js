@@ -74,7 +74,7 @@ async function run() {
     };
 
     // Users related API
-    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
+    app.get("/users", verifyToken, async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const result = await userCollection.findOne(query);
@@ -108,7 +108,7 @@ async function run() {
       res.send(result);
     });
 
-    app.put("/user/:id", verifyToken, verifyAdmin, async (req, res) => {
+    app.put("/user/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = { upsert: true };
