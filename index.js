@@ -244,6 +244,12 @@ async function run() {
       res.send(result);
     });
 
+    app.post("/feedback", verifyToken, async (req, res) => {
+      const feedback = req.body;
+      const result = await feedbackCollection.insertOne(feedback);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log(
