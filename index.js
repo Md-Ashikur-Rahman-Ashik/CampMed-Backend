@@ -36,6 +36,7 @@ async function run() {
       .db("campMed")
       .collection("participants");
     const userCollection = client.db("campMed").collection("users");
+    const feedbackCollection = client.db("campMed").collection("feedback");
 
     // JWT related API
     app.post("/jwt", async (req, res) => {
@@ -233,6 +234,13 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await participantCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Feedback related API
+    app.get("/feedback", async (req, res) => {
+      const cursor = feedbackCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
