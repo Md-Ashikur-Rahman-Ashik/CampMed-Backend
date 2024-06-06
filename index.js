@@ -203,15 +203,12 @@ async function run() {
       const participant = req.body;
       const email = req.params.email;
       const filter = { participantEmail: email };
-      const updatedEmail = {
+      const updateName = {
         $set: {
-          participantEmail: participant.participantEmail,
+          participantName: participant.name,
         },
       };
-      const result = await participantCollection.updateOne(
-        filter,
-        updatedEmail
-      );
+      const result = await participantCollection.updateMany(filter, updateName);
       res.send(result);
     });
 
