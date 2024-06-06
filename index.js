@@ -187,6 +187,12 @@ async function run() {
     );
 
     // Participant related API
+    app.get("/participant-camp", verifyToken, verifyAdmin, async (req, res) => {
+      const cursor = participantCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.get("/participant", verifyToken, async (req, res) => {
       const email = req.query.email;
       const query = { participantEmail: email };
