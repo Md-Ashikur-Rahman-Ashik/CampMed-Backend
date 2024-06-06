@@ -199,6 +199,22 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/participant/:email", verifyToken, async (req, res) => {
+      const participant = req.body;
+      const email = req.params.email;
+      const filter = { participantEmail: email };
+      const updatedEmail = {
+        $set: {
+          participantEmail: participant.participantEmail,
+        },
+      };
+      const result = await participantCollection.updateOne(
+        filter,
+        updatedEmail
+      );
+      res.send(result);
+    });
+
     // Increase request to old collection
     app.put("/participant/:id", async (req, res) => {
       const id = req.params.id;
