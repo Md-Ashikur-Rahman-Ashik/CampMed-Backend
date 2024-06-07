@@ -38,6 +38,7 @@ async function run() {
       .collection("participants");
     const userCollection = client.db("campMed").collection("users");
     const feedbackCollection = client.db("campMed").collection("feedback");
+    const paymentCollection = client.db("campMed").collection("payments");
 
     // JWT related API
     app.post("/jwt", async (req, res) => {
@@ -259,7 +260,7 @@ async function run() {
 
     // Payment intent
     app.post("/create-payment-intent", async (req, res) => {
-      const {price} = req?.body;
+      const { price } = req?.body;
       // console.log(price);
       const amount = parseInt(price * 100);
       const paymentIntent = await stripe.paymentIntents.create({
@@ -270,6 +271,13 @@ async function run() {
       res.send({
         clientSecret: paymentIntent.client_secret,
       });
+    });
+
+    // Payment related API
+    app.post("/payment", verifyToken, async (req, res) => {
+      const payment = req.body;
+      const result = await paymentCollection.insertOne(payment);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
