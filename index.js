@@ -228,6 +228,21 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/participant/:id", verifyToken, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateStatus = {
+        $set: {
+          paymentStatus: "Paid",
+        },
+      };
+      const result = await participantCollection.updateOne(
+        filter,
+        updateStatus
+      );
+      res.send(result);
+    });
+
     // Increase request to old collection
     app.put("/participant/:id", async (req, res) => {
       const id = req.params.id;
