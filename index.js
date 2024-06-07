@@ -202,7 +202,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/participants/:id", verifyToken, async (req, res) => {
+    app.get("/participants/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await participantCollection.findOne(query);
