@@ -243,6 +243,26 @@ async function run() {
       res.send(result);
     });
 
+    app.patch(
+      "/update-participant/:confirmId",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const confirmId = req.params.confirmId;
+        const filter = { _id: new ObjectId(confirmId) };
+        const updateStatus = {
+          $set: {
+            confirmation: "Confirmed",
+          },
+        };
+        const result = await participantCollection.updateOne(
+          filter,
+          updateStatus
+        );
+        res.send(result);
+      }
+    );
+
     // Increase request to old collection
     app.put("/participant/:id", async (req, res) => {
       const id = req.params.id;
