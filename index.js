@@ -323,6 +323,12 @@ async function run() {
     });
 
     // Payment related API
+    app.get("/payment-history", verifyToken, async (req, res) => {
+      const payment = paymentCollection.find();
+      const result = payment.toArray();
+      res.send(result);
+    });
+
     app.post("/payment", verifyToken, async (req, res) => {
       const payment = req.body;
       const result = await paymentCollection.insertOne(payment);
