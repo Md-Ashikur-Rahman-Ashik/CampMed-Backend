@@ -325,7 +325,8 @@ async function run() {
     // Payment related API
     app.get("/payment-history", verifyToken, async (req, res) => {
       const payment = paymentCollection.find();
-      const result = payment.toArray();
+      // console.log(payment);
+      const result = await payment.toArray();
       res.send(result);
     });
 
