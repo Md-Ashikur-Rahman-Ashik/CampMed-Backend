@@ -209,6 +209,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/participant/:campName", verifyToken, async (req, res) => {
+      const campName = req.params.campName;
+      const query = { campName: campName };
+      const result = await participantCollection.findOne(query);
+      res.send(result);
+    });
+
     app.post("/participant", async (req, res) => {
       const participant = req.body;
       const result = await participantCollection.insertOne(participant);
