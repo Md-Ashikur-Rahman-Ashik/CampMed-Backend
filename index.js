@@ -159,7 +159,20 @@ async function run() {
 
     app.get("/camp", verifyToken, verifyAdmin, async (req, res) => {
       const email = req.query.email;
-      const query = { email: email };
+      const query = {
+        $or: [
+          { email: email },
+          // {
+          //   campName: { $regex: filter?.search || "", $options: "i" },
+          // },
+          // {
+          //   location: { $regex: filter?.search || "", $options: "i" },
+          // },
+          // {
+          //   date: { $regex: filter?.search || "", $options: "i" },
+          // },
+        ],
+      };
       const result = await campCollection.find(query).toArray();
       res.send(result);
     });
@@ -212,16 +225,15 @@ async function run() {
     });
 
     app.get("/participant", verifyToken, async (req, res) => {
-      const filter = req?.query;
       const email = req.query.email;
       const query = {
         $or: [
-          {
-            campName: { $regex: filter?.search || "", $options: "i" },
-          },
-          {
-            date: { $regex: filter?.search || "", $options: "i" },
-          },
+          // {
+          //   campName: { $regex: filter?.search || "", $options: "i" },
+          // },
+          // {
+          //   date: { $regex: filter?.search || "", $options: "i" },
+          // },
           { participantEmail: email },
         ],
       };
