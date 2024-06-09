@@ -143,8 +143,10 @@ async function run() {
           },
         ],
       };
+      // console.log(query)
       const cursor = campCollection.find(query).sort({ participantCount: -1 });
       const result = await cursor.toArray();
+      // console.log(result);
       res.send(result);
     });
 
@@ -210,9 +212,23 @@ async function run() {
     });
 
     app.get("/participant", verifyToken, async (req, res) => {
+      const filter = req?.query;
       const email = req.query.email;
-      const query = { participantEmail: email };
+      const query = {
+        $or: [
+          {
+            campName: { $regex: filter?.search || "", $options: "i" },
+          },
+          {
+            date: { $regex: filter?.search || "", $options: "i" },
+          },
+          { participantEmail: email },
+        ],
+      };
+      // const query = { participantEmail: email };
+      // console.log(query);
       const result = await participantCollection.find(query).toArray();
+      // console.log(result)
       res.send(result);
     });
 
@@ -338,7 +354,18 @@ async function run() {
 
     // Payment related API
     app.get("/payment-history", verifyToken, async (req, res) => {
-      const payment = paymentCollection.find();
+      const filter = req?.query;
+      const query = {
+        $or: [
+          {
+            campName: { $regex: filter?.search || "", $options: "i" },
+          },
+          {
+            campFees: { $regex: filter?.search || "", $options: "i" },
+          },
+        ],
+      };
+      const payment = paymentCollection.find(query);
       // console.log(payment);
       const result = await payment.toArray();
       res.send(result);
