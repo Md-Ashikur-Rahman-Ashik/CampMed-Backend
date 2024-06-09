@@ -129,7 +129,11 @@ async function run() {
 
     // Camp Related API
     app.get("/camps", async (req, res) => {
-      const cursor = campCollection.find().sort({ participantCount: -1 });
+      const filter = req.query;
+      const query = {
+        campName: { $regex: filter.search },
+      };
+      const cursor = campCollection.find(query).sort({ participantCount: -1 });
       const result = await cursor.toArray();
       res.send(result);
     });
