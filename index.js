@@ -129,9 +129,19 @@ async function run() {
 
     // Camp Related API
     app.get("/camps", async (req, res) => {
-      const filter = req.query;
+      const filter = req?.query;
       const query = {
-        campName: { $regex: filter.search },
+        $or: [
+          {
+            campName: { $regex: filter?.search || "", $options: "i" },
+          },
+          {
+            location: { $regex: filter?.search || "", $options: "i" },
+          },
+          {
+            date: { $regex: filter?.search || "", $options: "i" },
+          },
+        ],
       };
       const cursor = campCollection.find(query).sort({ participantCount: -1 });
       const result = await cursor.toArray();
